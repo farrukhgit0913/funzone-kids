@@ -1,4 +1,4 @@
-# 🎮 Kids Fun Games — MEAN Stack
+# 🎮 Kids Fun Games
 
 Two educational kids games built with **MongoDB, Express, Angular, Node.js**.
 
