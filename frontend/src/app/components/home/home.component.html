@@ -1,0 +1,67 @@
+<div class="home-container">
+  <header class="hero">
+    <div class="stars">⭐ 🌟 ✨ 🌟 ⭐</div>
+    <h1>🎮 Kids Fun Games! 🎮</h1>
+    <p class="subtitle">Learn while you play!</p>
+  </header>
+
+  <div class="games-grid">
+    <!-- Animal Matching Game -->
+    <div class="game-card animal-card" (click)="navigateTo('animal-matching')">
+      <div class="game-icon">🐾</div>
+      <div class="animals-preview">
+        <span>🐶</span><span>🐱</span><span>🐮</span>
+      </div>
+      <h2>Animal Matching</h2>
+      <p>Match animals with their names & sounds!</p>
+      <div class="features">
+        <span class="badge">🖼️ Pictures</span>
+        <span class="badge">🔤 Names</span>
+        <span class="badge">🔊 Sounds</span>
+      </div>
+      <button class="play-btn">🎮 Play Now!</button>
+      <div class="game-stats" *ngIf="stats">
+        <small>🎯 {{stats.animalMatching?.totalGames || 0}} games played</small>
+      </div>
+    </div>
+
+    <!-- Shape Puzzle Game -->
+    <div class="game-card shape-card" (click)="navigateTo('shape-puzzle')">
+      <div class="game-icon">🧩</div>
+      <div class="shapes-preview">
+        <span>🔺</span><span>⬛</span><span>🔵</span>
+      </div>
+      <h2>Shape Puzzle</h2>
+      <p>Drag & drop shapes to complete puzzles!</p>
+      <div class="features">
+        <span class="badge">🔺 Shapes</span>
+        <span class="badge">🎨 Colors</span>
+        <span class="badge">🧩 Puzzles</span>
+      </div>
+      <button class="play-btn">🎮 Play Now!</button>
+      <div class="game-stats" *ngIf="stats">
+        <small>🎯 {{stats.shapePuzzle?.totalGames || 0}} games played</small>
+      </div>
+    </div>
+  </div>
+
+  <!-- Leaderboard -->
+  <div class="leaderboard" *ngIf="leaderboard.length > 0">
+    <h3>🏆 Top Players</h3>
+    <div class="leaderboard-list">
+      <div class="leader-item" *ngFor="let entry of leaderboard; let i = index">
+        <span class="rank">
+          <ng-container *ngIf="i === 0">🥇</ng-container>
+          <ng-container *ngIf="i === 1">🥈</ng-container>
+          <ng-container *ngIf="i === 2">🥉</ng-container>
+          <ng-container *ngIf="i > 2">#{{i+1}}</ng-container>
+        </span>
+        <span class="name">{{entry.playerName}}</span>
+        <span class="game-tag" [class.animal]="entry.gameType === 'animal-matching'">
+          {{entry.gameType === 'animal-matching' ? '🐾' : '🧩'}}
+        </span>
+        <span class="score">{{entry.score}} pts</span>
+      </div>
+    </div>
+  </div>
+</div>

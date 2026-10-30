@@ -1,0 +1,92 @@
+<!-- Name Input Screen -->
+<div class="game-container" *ngIf="showNameInput">
+  <div class="name-screen">
+    <button class="back-btn" (click)="goHome()">← Back</button>
+    <div class="title-area">
+      <div class="big-emoji">🐾</div>
+      <h1>Animal Matching!</h1>
+      <p>Match animals with their names and sounds</p>
+    </div>
+
+    <div class="options-panel">
+      <h3>Match Mode:</h3>
+      <div class="mode-buttons">
+        <button [class.active]="matchMode === 'emoji-name'" (click)="changeMode('emoji-name')">🐶 ↔ Name</button>
+        <button [class.active]="matchMode === 'emoji-sound'" (click)="changeMode('emoji-sound')">🐶 ↔ Sound</button>
+      </div>
+
+      <h3>Difficulty:</h3>
+      <div class="mode-buttons">
+        <button [class.active]="level === 1" (click)="level = 1">⭐ Easy (4 pairs)</button>
+        <button [class.active]="level === 2" (click)="level = 2">⭐⭐ Medium (6 pairs)</button>
+        <button [class.active]="level === 3" (click)="level = 3">⭐⭐⭐ Hard (8 pairs)</button>
+      </div>
+    </div>
+
+    <div class="name-input-area">
+      <label>Your Name:</label>
+      <input type="text" [(ngModel)]="playerName" placeholder="Enter your name..." maxlength="20" (keyup.enter)="startGame()">
+      <button class="start-btn" (click)="startGame()">🎮 Start Game!</button>
+    </div>
+  </div>
+</div>
+
+<!-- Game Screen -->
+<div class="game-container" *ngIf="gameStarted && !showNameInput">
+  <div class="game-header">
+    <button class="back-btn" (click)="goHome()">← Home</button>
+    <div class="stats">
+      <span class="stat">⏱️ {{formatTime(timer)}}</span>
+      <span class="stat">🎯 {{matchedCount}}/{{totalPairs}}</span>
+      <span class="stat">🌟 {{score}} pts</span>
+      <span class="stat">🔄 {{moves}} moves</span>
+    </div>
+    <span class="level-badge">Level {{level}}</span>
+  </div>
+
+  <div class="mode-info">
+    <span *ngIf="matchMode === 'emoji-name'">Match the 🐾 animal with its <strong>Name</strong>!</span>
+    <span *ngIf="matchMode === 'emoji-sound'">Match the 🐾 animal with its <strong>Sound</strong>!</span>
+  </div>
+
+  <!-- Cards Grid -->
+  <div class="cards-grid" [class.grid-4]="totalPairs <= 4" [class.grid-6]="totalPairs === 6" [class.grid-8]="totalPairs >= 7">
+    <div
+      *ngFor="let card of cards"
+      class="card"
+      [class.flipped]="card.isFlipped || card.isMatched"
+      [class.matched]="card.isMatched"
+      [class.is-name]="card.type === 'name'"
+      [class.is-sound]="card.type === 'sound'"
+      (click)="flipCard(card)">
+      <div class="card-inner">
+        <div class="card-front">❓</div>
+        <div class="card-back">
+          <span class="card-content">{{card.content}}</span>
+          <span class="card-label" *ngIf="card.type === 'name'">✏️ Name</span>
+          <span class="card-label" *ngIf="card.type === 'sound'">🔊 Sound</span>
+          <span class="card-label" *ngIf="card.type === 'image'">🐾 Animal</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Win Screen -->
+  <div class="win-overlay" *ngIf="gameWon">
+    <div class="win-card">
+      <div class="win-emoji">🏆</div>
+      <h2>You Won, {{playerName}}!</h2>
+      <p>{{scoreMessage}}</p>
+      <div class="win-stats">
+        <div class="win-stat"><span>⭐ Score</span><strong>{{score}}</strong></div>
+        <div class="win-stat"><span>⏱️ Time</span><strong>{{formatTime(timer)}}</strong></div>
+        <div class="win-stat"><span>🔄 Moves</span><strong>{{moves}}</strong></div>
+      </div>
+      <div class="win-actions">
+        <button (click)="nextLevel()" *ngIf="level < 3">🚀 Next Level!</button>
+        <button (click)="initGame()">🔄 Play Again</button>
+        <button class="home-btn" (click)="goHome()">🏠 Home</button>
+      </div>
+    </div>
+  </div>
+</div>

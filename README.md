@@ -70,3 +70,4 @@ ng serve          # runs on http://localhost:4200
 - ✅ Responsive design (mobile-friendly)
 - ✅ Fun kid-friendly UI with animations
 # funzone-kids
+# funzone-kids

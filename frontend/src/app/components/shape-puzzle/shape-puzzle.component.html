@@ -1,0 +1,119 @@
+<!-- Name Input Screen -->
+<div class="game-container" *ngIf="showNameInput">
+  <div class="name-screen">
+    <button class="back-btn" (click)="goHome()">← Back</button>
+    <div class="title-area">
+      <div class="big-emoji">🧩</div>
+      <h1>Shape Puzzle!</h1>
+      <p>Drag shapes into the right spots!</p>
+    </div>
+
+    <div class="options-panel">
+      <h3>Level:</h3>
+      <div class="mode-buttons">
+        <button [class.active]="level === 1" (click)="level = 1">⭐ Easy (4 shapes)</button>
+        <button [class.active]="level === 2" (click)="level = 2">⭐⭐ Medium (6 shapes)</button>
+        <button [class.active]="level === 3" (click)="level = 3">⭐⭐⭐ Hard (8 shapes)</button>
+      </div>
+      <div class="hints-toggle">
+        <label>
+          <input type="checkbox" [(ngModel)]="showHints"> Show shape hints in zones
+        </label>
+      </div>
+    </div>
+
+    <div class="name-input-area">
+      <label>Your Name:</label>
+      <input type="text" [(ngModel)]="playerName" placeholder="Enter your name..." maxlength="20" (keyup.enter)="startGame()">
+      <button class="start-btn" (click)="startGame()">🎮 Start Game!</button>
+    </div>
+  </div>
+</div>
+
+<!-- Game Screen -->
+<div class="game-container" *ngIf="gameStarted && !showNameInput">
+  <div class="game-header">
+    <button class="back-btn" (click)="goHome()">← Home</button>
+    <div class="stats">
+      <span class="stat">⏱️ {{formatTime(timer)}}</span>
+      <span class="stat">✅ {{correctCount}}/{{dropZones.length}}</span>
+      <span class="stat">🌟 {{score}} pts</span>
+      <span class="stat">🔄 {{moves}} moves</span>
+    </div>
+    <span class="level-badge">Level {{level}}</span>
+  </div>
+
+  <div class="instructions">
+    <span *ngIf="!draggedShape">👆 Click a shape, then click a zone — or drag & drop!</span>
+    <span *ngIf="draggedShape" class="dragging-hint">🎯 Now click the matching zone for <strong>{{draggedShape.name}}</strong>!</span>
+  </div>
+
+  <!-- Drop Zones -->
+  <div class="drop-zones-area">
+    <h3>Drop Zones</h3>
+    <div class="drop-zones-grid">
+      <div
+        *ngFor="let zone of dropZones"
+        class="drop-zone"
+        [class.filled]="zone.shape !== null"
+        [class.correct]="zone.isCorrect"
+        [class.wrong]="zone.isWrong"
+        [class.ready]="draggedShape !== null && zone.shape === null && !zone.isCorrect"
+        (dragover)="onDragOver($event)"
+        (drop)="onDrop($event, zone)"
+        (click)="clickZone(zone)">
+        <div class="zone-label">{{zone.label}}</div>
+        <div class="zone-content" *ngIf="!zone.shape">
+          <span class="zone-hint" *ngIf="showHints">{{zone.hint}}</span>
+          <span class="zone-hint" *ngIf="!showHints">?</span>
+        </div>
+        <div class="zone-placed" *ngIf="zone.shape">
+          <span class="shape-symbol">{{zone.shape.symbol}}</span>
+          <span class="match-icon" *ngIf="zone.isCorrect">✅</span>
+          <span class="match-icon" *ngIf="zone.isWrong">❌</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Shapes Tray -->
+  <div class="shapes-tray">
+    <h3>Shapes Tray</h3>
+    <div class="shapes-row">
+      <div
+        *ngFor="let shape of availableShapes"
+        class="shape-tile"
+        [class.selected]="draggedShape?.id === shape.id"
+        [style.borderColor]="shape.color"
+        [style.backgroundColor]="shape.bgColor"
+        draggable="true"
+        (dragstart)="onDragStart(shape)"
+        (click)="selectShape(shape)">
+        <span class="shape-emoji">{{shape.symbol}}</span>
+        <span class="shape-name">{{shape.name}}</span>
+      </div>
+      <div class="empty-tray" *ngIf="availableShapes.length === 0 && !gameWon">
+        🎉 All shapes placed!
+      </div>
+    </div>
+  </div>
+
+  <!-- Win Overlay -->
+  <div class="win-overlay" *ngIf="gameWon">
+    <div class="win-card">
+      <div class="win-emoji">🏆</div>
+      <h2>Puzzle Complete, {{playerName}}!</h2>
+      <p>{{scoreMessage}}</p>
+      <div class="win-stats">
+        <div class="win-stat"><span>⭐ Score</span><strong>{{score}}</strong></div>
+        <div class="win-stat"><span>⏱️ Time</span><strong>{{formatTime(timer)}}</strong></div>
+        <div class="win-stat"><span>🔄 Moves</span><strong>{{moves}}</strong></div>
+      </div>
+      <div class="win-actions">
+        <button (click)="nextLevel()" *ngIf="level < 3">🚀 Next Level!</button>
+        <button (click)="initGame()">🔄 Play Again</button>
+        <button class="home-btn" (click)="goHome()">🏠 Home</button>
+      </div>
+    </div>
+  </div>
+</div>
